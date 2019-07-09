@@ -38,6 +38,23 @@
  */
 #pragma once
 
+#include <math.h>
+#include <string.h>
+
+#include <drivers/drv_baro.h>
+#include <drivers/drv_hrt.h>
+#include <drivers/device/i2c.h>
+#include <drivers/device/ringbuffer.h>
+#include <drivers/device/spi.h>
+#include <lib/cdev/CDev.hpp>
+#include <perf/perf_counter.h>
+#include <px4_config.h>
+#include <px4_getopt.h>
+#include <px4_work_queue/ScheduledWorkItem.hpp>
+
+#include "board_config.h"
+
+
 #define BMP280_ADDR_CAL		0x88	/* address of 12x 2 bytes calibration data */
 #define BMP280_ADDR_DATA	0xF7	/* address of 2x 3 bytes p-t data */
 
@@ -148,12 +165,14 @@ public:
 	// bulk read of calibration data into buffer, return same pointer
 	virtual bmp280::calibration_s *get_calibration(uint8_t addr) = 0;
 
+	virtual uint32_t get_device_id() const = 0;
+
 };
 
 } /* namespace */
 
 
 /* interface factories */
-extern bmp280::IBMP280 *bmp280_spi_interface(uint8_t busnum, uint8_t device, bool external);
-extern bmp280::IBMP280 *bmp280_i2c_interface(uint8_t busnum, uint8_t device, bool external);
-typedef bmp280::IBMP280 *(*BMP280_constructor)(uint8_t, uint8_t, bool);
+extern bmp280::IBMP280 *bmp280_spi_interface(uint8_t busnum, uint32_t device, bool external);
+extern bmp280::IBMP280 *bmp280_i2c_interface(uint8_t busnum, uint32_t device, bool external);
+typedef bmp280::IBMP280 *(*BMP280_constructor)(uint8_t, uint32_t, bool);
