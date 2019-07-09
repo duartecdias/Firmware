@@ -1,0 +1,27 @@
+<launch>
+
+	<group ns="quad99">
+
+		<include file="$(find mavros)/launch/px4.launch">
+			<arg name="fcu_url" value="$(arg fcu_url)" />
+		</include>
+
+		<node name="mavros_estimator_interface" pkg="estimator" type="mavros_estimator_interface" output="screen">
+			<rosparam command="load" file="$(find estimator)/params/mavros_estimator_interface_params.yaml" />
+		</node>
+
+		<node name="main_control" pkg="main_control" type="main_control_2" output="screen" >
+			<rosparam command="load" file="$(find main_control)/../../../PX4_firmware/quad_config_files/px4_sitl/quad99.yaml" />
+			<rosparam command="load" file="$(find main_control)/../../../PX4_firmware/quad_config_files/px4_sitl/main_control_params_quad99.yaml" />
+			<rosparam command="load" file="$(find main_control)/../../../PX4_firmware/quad_config_files/px4_sitl/partial_control_params_sitl.yaml" />
+		</node>
+
+	</group>
+
+	<node name="user_control_sim" pkg="user_control" type="user_control_sim"  output="screen" >
+	</node>
+
+	<node name = "user_terminal" pkg = "user_control" type = "user_terminal" output = "screen" >
+	</node>
+
+</launch>

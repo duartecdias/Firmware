@@ -1,0 +1,8 @@
+formation_list: "quad99 quad98 quad97 quad96"
+this_quad: "quad99"
+mass: 2.0
+asctec: 0
+px4_calib_slope: 0.0258
+px4_calib_bias: -0.0904
+asctec_calib_slope: 0.07170
+asctec_calib_bias: 0.0

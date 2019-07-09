@@ -713,6 +713,7 @@ MulticopterAttitudeControl::publish_actuator_controls()
 void
 MulticopterAttitudeControl::run()
 {
+	static long test_counter = 0;
 
 	/*
 	 * do subscriptions
@@ -752,6 +753,8 @@ MulticopterAttitudeControl::run()
 
 	while (!should_exit()) {
 
+		test_counter++;
+
 		// check if the selected gyro has updated first
 		sensor_correction_poll();
 		poll_fds.fd = _sensor_gyro_sub[_selected_gyro];
@@ -787,6 +790,8 @@ MulticopterAttitudeControl::run()
 
 			/* run the rate controller immediately after a gyro update */
 			if (_v_control_mode.flag_control_rates_enabled) {
+				PX4_INFO("%li: Running rate controller with desired rate (%f %f %f).", test_counter, (double)_rates_sp(0), (double)_rates_sp(1), (double)_rates_sp(2));
+
 				control_attitude_rates(dt);
 
 				publish_actuator_controls();
@@ -827,8 +832,13 @@ MulticopterAttitudeControl::run()
 						attitude_setpoint_generated = true;
 					}
 
+					Quatf q_aux = Quatf(_v_att_sp.q_d);
 					control_attitude();
 					publish_rates_setpoint();
+					PX4_INFO("%li: Attitude controller - desired attitude (%f %f %f %f), desired rate (%f %f %f)", test_counter, (double)q_aux(0), (double)q_aux(1), (double)q_aux(2), (double)q_aux(3),\
+						(double)_rates_sp(0), (double)_rates_sp(1), (double)_rates_sp(2));
+					q_aux = Quatf(_v_att.q);
+					PX4_INFO("%li: Attitude controller - current attitude (%f %f %f %f)", test_counter, (double)q_aux(0), (double)q_aux(1), (double)q_aux(2), (double)q_aux(3));
 				}
 
 			} else {
